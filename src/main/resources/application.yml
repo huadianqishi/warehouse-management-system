@@ -1,0 +1,62 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: warehouse-management-system
+  
+  # 数据源配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/warehouse_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    # 敏感信息不提交进仓库。本地请建 application-local.yml（已被 .gitignore 忽略）填入真实密码；
+    # 或设置环境变量 DB_PASSWORD。这里留空默认值，避免真实密码进 git。
+    password: ${DB_PASSWORD:}
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+  
+  # Jackson配置（日期格式）
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.warehouse.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT配置
+jwt:
+  # 密钥同样走本地配置/环境变量，默认值仅用于本地开发占位
+  secret: ${JWT_SECRET:warehouse-management-system-secret-key-2025}
+  expiration: 86400000  # token过期时间 24小时（毫秒）
+  header: Authorization
+
+# 日志配置
+logging:
+  level:
+    com.warehouse: debug
+    com.baomidou.mybatisplus: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+
